@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "6000:5000"
+    depends_on:
+      - mongo
+      - rabbitmq
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/bookstore
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672/
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
