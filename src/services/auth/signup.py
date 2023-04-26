@@ -1,5 +1,37 @@
 import hashlib
 
+# import app
+from src.app import app, mongo
+
+
+
+
+
+@app.route('/user/login/', methods=['POST'])
+def login():
+    db = mongo.db.users
+    email = request.json['email']
+    password = request.json['password']
+    result = ""
+
+    response = db.find_one({'email': email})
+
+    if response:
+        if check_password_hash(response['password'], password):
+            result = jsonify({'email': response['email']})
+        else:
+            result = jsonify({'error': 'Invalid username and password'})
+    else:
+        result = jsonify({'result': 'No results found'})
+
+    return result
+
+
+
+
+
+
+
 
 
 def hash_user_password(password):
