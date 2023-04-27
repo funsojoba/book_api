@@ -27,6 +27,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from services.auth import auth_blueprint
 
+# from services.books import books_blueprint
+
 
 app = Flask(__name__)
 app.secret_key = "secretkey"
@@ -34,6 +36,7 @@ app.config["JWT_SECRET_KEY"] = "secret-key"
 jwt = JWTManager(app)
 
 app.register_blueprint(auth_blueprint)
+# app.register_blueprint(books_blueprint)
 # api = Api(app)
 
 app.config["MONGO_URI"] = "mongodb://localhost:27017/book_api_db"
@@ -53,19 +56,6 @@ mongo = PyMongo(app)
 @app.route("/")
 def index():
     return api_response(200, {"message": "Welcome to my API"})
-
-
-@app.route("/users", methods=["GET"])
-def users():
-    db = mongo.db.users
-    output = []
-
-    for q in db.find():
-        output.append(
-            {"id": dumps(q["_id"]), "email": q["email"], "username": q["username"]}
-        )
-
-    return api_response(200, "success", output)
 
 
 if __name__ == "__main__":
