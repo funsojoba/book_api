@@ -19,6 +19,7 @@ from helpers.response import api_response
 from services.auth import auth_blueprint
 from services.books_service import books_blueprint
 from services.users import user_blueprint
+from services.book_api_service import book_api_blueprint
 
 
 # from services.users_service import users_blueprint
@@ -29,13 +30,10 @@ app.secret_key = "secretkey"
 app.config["JWT_SECRET_KEY"] = "secret-key"
 jwt = JWTManager(app)
 
-# app.register_blueprint(auth_blueprint)
-# app.register_blueprint(users_blueprint)
-
 # Register the views Blueprint
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
-# app.register_blueprint(books_blueprint)
+app.register_blueprint(book_api_blueprint)
 
 # api = Api(app)
 

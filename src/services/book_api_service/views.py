@@ -4,10 +4,10 @@ from flask_jwt_extended import jwt_required
 
 from helpers.response import api_response
 
-books_blueprint = Blueprint("books", __name__)
+book_api_blueprint = Blueprint("book_bp", __name__, url_prefix="/book")
 
 
-@books_blueprint.route("/", methods=["GET"])
+@book_api_blueprint.route("/", methods=["GET"])
 @jwt_required()
 def list_books():
     from app import mongo
@@ -28,25 +28,17 @@ def list_books():
     return api_response(200, message="Books retrieved successfully", data=book_list)
 
 
-@books_blueprint.route("/<id>", methods=["GET"])
+@book_api_blueprint.route("/<id>", methods=["GET"])
 @jwt_required()
 def get_book(id):
-    from app import mongo
-
     db = mongo.db.books
     single_book = db.find_one({"_id": id})
-    return api_response(
-        200,
-        data=single_book,
-        message="Book retrieved successfully" if single_book else None,
-    )
+    return api_response(200, data=single_book)
 
 
-@books_blueprint.route("/", methods=["POST"])
+@book_api_blueprint.route("/", methods=["POST"])
 @jwt_required()
 def add_book():
-    from app import mongo
-
     db = mongo.db.books
     title = request.json.get("title", None)
     author = request.json.get("author", None)
@@ -71,7 +63,7 @@ def add_book():
     return api_response(201, "book added successfully")
 
 
-@books_blueprint.route("/<id>", methods=["PUT"])
+@book_api_blueprint.route("/<id>", methods=["PUT"])
 @jwt_required()
 def update_book(id):
     db = mongo.db.books

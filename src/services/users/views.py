@@ -25,4 +25,4 @@ def get_users():
             else:
                 user_dict[key] = value
         user_list.append(user_dict)
-    return api_response(201, message="registered successfully", data=user_list)
+    return api_response(200, message="registered successfully", data=user_list)
