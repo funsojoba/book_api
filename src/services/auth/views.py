@@ -1,4 +1,4 @@
-from app import mongo
+from flask import Blueprint
 
 from flask import request
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,14 +8,17 @@ from flask_jwt_extended import (
     jwt_required,
 )
 
-from . import auth_blueprint
-
-
 from helpers.response import api_response
+from helpers.password_helper import password_regex
+
+
+auth_blueprint = Blueprint("auth", __name__)
 
 
 @auth_blueprint.route("/user/signup/", methods=["POST"])
 def signup():
+    from app import mongo
+
     db = mongo.db.users
     errors = []
     username = request.json.get("username", None)
@@ -43,18 +46,20 @@ def signup():
         errors.append("username or email already exists")
 
     if errors:
-        return api_response(errors, 400)
+        return api_response(400, errors=errors)
 
     hashed_password = generate_password_hash(password)
 
     id = db.insert_one(
         {"email": email, "password": hashed_password, "username": username}
     )
-    return api_response("registered successfully", 201)
+    return api_response(201, "registered successfully")
 
 
 @auth_blueprint.route("/user/login/", methods=["POST"])
 def login():
+    from app import mongo
+
     db = mongo.db.users
     username = request.json.get("username", None)
     email = request.json.get("email", None)

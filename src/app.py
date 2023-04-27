@@ -9,25 +9,19 @@ from flask import Blueprint
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
 from bson.objectid import ObjectId
-from flask_jwt_extended import (
-    create_access_token,
-    JWTManager,
-    jwt_required,
-)
+
+from flask_jwt_extended import JWTManager
 from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from helpers.response import api_response
 
-from datetime import datetime, timedelta
-from functools import wraps
-
-from helpers.password_helper import password_regex
-
-from werkzeug.security import generate_password_hash, check_password_hash
-
 from services.auth import auth_blueprint
+from services.books_service import books_blueprint
+from services.users import user_blueprint
 
-# from services.books import books_blueprint
+
+# from services.users_service import users_blueprint
 
 
 app = Flask(__name__)
@@ -35,8 +29,14 @@ app.secret_key = "secretkey"
 app.config["JWT_SECRET_KEY"] = "secret-key"
 jwt = JWTManager(app)
 
+# app.register_blueprint(auth_blueprint)
+# app.register_blueprint(users_blueprint)
+
+# Register the views Blueprint
 app.register_blueprint(auth_blueprint)
+app.register_blueprint(user_blueprint)
 # app.register_blueprint(books_blueprint)
+
 # api = Api(app)
 
 app.config["MONGO_URI"] = "mongodb://localhost:27017/book_api_db"
@@ -59,5 +59,5 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=6000)
     # host='0.0.0.0',
