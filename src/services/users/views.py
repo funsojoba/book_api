@@ -6,11 +6,11 @@ from bson import ObjectId
 from helpers.response import api_response
 
 
-user_blueprint = Blueprint("users", __name__)
+user_blueprint = Blueprint("users", __name__, url_prefix="/user")
 
 
-@user_blueprint.route("/users", methods=["GET"])
-def get_users():
+@user_blueprint.route("/", methods=["GET"])
+def list_users():
     from app import mongo
 
     db = mongo.db.users
@@ -26,3 +26,13 @@ def get_users():
                 user_dict[key] = value
         user_list.append(user_dict)
     return api_response(200, message="registered successfully", data=user_list)
+
+
+@user_blueprint.route("/<id>", methods=["GET"])
+def get_user(id):
+    from app import mongo
+
+    db = mongo.db.users
+
+    single_user = db.find_one({"_id": id})
+    return api_response(200, message="User retrieved successfully", data=single_user)
