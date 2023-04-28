@@ -1,10 +1,11 @@
 from flask import request
 from flask import Blueprint
-from flask_jwt_extended import jwt_required
+from bson import ObjectId
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from helpers.response import api_response
 
-books_blueprint = Blueprint("books", __name__)
+books_blueprint = Blueprint("books", __name__, url_prefix="/book")
 
 
 @books_blueprint.route("/", methods=["GET"])
@@ -49,23 +50,29 @@ def add_book():
 
     db = mongo.db.books
     title = request.json.get("title", None)
-    author = request.json.get("author", None)
+    page_number = request.json.get("page_number", None)
     description = request.json.get("description", None)
-    price = request.json.get("price", None)
+    is_best_seller = request.json.get("is_best_seller", False)
+
+    current_user_id = get_jwt_identity()
+
+    errors = []
+
     if not title:
-        return api_response(400, "title is required")
-    if not author:
-        return api_response(400, "author is required")
-    if not description:
-        return api_response(400, "description is required")
-    if not price:
-        return api_response(400, "price is required")
-    db.insert_one(
+        errors.append("title is required")
+
+    if not page_number:
+        errors.append("page_number is required")
+
+    if errors:
+        return api_response(400, errors=errors)
+
+    book = db.insert_one(
         {
             "title": title,
-            "author": author,
+            "author": current_user_id,
             "description": description,
-            "price": price,
+            "is_best_seller": is_best_seller,
         }
     )
     return api_response(201, "book added successfully")
@@ -74,28 +81,24 @@ def add_book():
 @books_blueprint.route("/<id>", methods=["PUT"])
 @jwt_required()
 def update_book(id):
+    from app import mongo
+
     db = mongo.db.books
     title = request.json.get("title", None)
-    author = request.json.get("author", None)
+    page_number = request.json.get("page_number", None)
     description = request.json.get("description", None)
-    price = request.json.get("price", None)
-    if not title:
-        return api_response(400, "title is required")
-    if not author:
-        return api_response(400, "author is required")
-    if not description:
-        return api_response(400, "description is required")
-    if not price:
-        return api_response(400, "price is required")
-    db.update_one(
-        {"_id": id},
-        {
-            "$set": {
-                "title": title,
-                "author": author,
-                "description": description,
-                "price": price,
-            }
-        },
-    )
+    is_best_seller = request.json.get("is_best_seller", False)
+
+    book = db.find_one({"_id": id})
+    print("BOOK: ", book)
+
+    # db.update_one(
+    #     {"_id": id},
+    #     {
+    #         "$set": {
+    #             "title": title,
+    #             "description": description,
+    #         }
+    #     },
+    # )
     return api_response(200, "book updated successfully")
