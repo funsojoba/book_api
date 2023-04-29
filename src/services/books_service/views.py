@@ -37,17 +37,18 @@ def get_book(id):
     db = mongo.db.books
     single_book = db.find_one({"_id": ObjectId(id)})
 
-    # Convert single_book to a JSON-compatible dictionary
-    json_book = json_util.loads(json_util.dumps(single_book))
+    if single_book:
+        json_book = json_util.loads(json_util.dumps(single_book))
 
-    # Replace ObjectId with its string representation
-    json_book["_id"] = str(json_book["_id"])
+        json_book["_id"] = str(json_book["_id"])
 
-    return api_response(
-        200,
-        data=json_book,
-        message="Book retrieved successfully" if single_book else None,
-    )
+        return api_response(
+            200,
+            data=json_book,
+            message="Book retrieved successfully" if single_book else None,
+        )
+    else:
+        return api_response(404, message="Book not found")
 
 
 @books_blueprint.route("/", methods=["POST"])
@@ -97,10 +98,9 @@ def update_book(id):
     is_best_seller = request.json.get("is_best_seller", False)
 
     book = db.find_one({"_id": ObjectId(id)})
-    print("BOOK: ", book)
 
     db.update_one(
-        {"_id": id},
+        {"_id": ObjectId(id)},
         {
             "$set": {
                 "title": title,
@@ -109,3 +109,14 @@ def update_book(id):
         },
     )
     return api_response(200, "book updated successfully")
+
+
+@books_blueprint.route("/<id>", methods=["DELETE"])
+@jwt_required()
+def delete_book(id):
+    from app import mongo
+
+    db = mongo.db.books
+
+    db.delete_one({"_id": ObjectId(id)})
+    return api_response(204, "book deleted successfully")
