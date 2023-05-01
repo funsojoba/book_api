@@ -1,29 +1,50 @@
-version: "3.8"
+version: "3.9"
 
 services:
-  app:
+  web:
     build: .
-    command: python -u src/app.py
-    volumes:
-      - .:/app
-    ports: 
-      - "6000:6000"
-    depends_on:
-      - mongo
-      - rabbitmq
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/bookstore
-      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672/
-
-  mongo:
-    image: mongo
+    command: python3 src/app.py
     ports:
-      - "27017:27017"
+      - "8000:8000"
+    depends_on:
+      - mongodb
+      - rabbitmq
+  db:
+    image: mongo:latest
+    hostname: test_mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=animal_db
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=pass
     volumes:
-      - ./data:/data/db
+      - ./init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro
+    ports:
+      - 27017:27017
+  mongodb:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodb_data:/data/db
 
   rabbitmq:
-    image: rabbitmq
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    restart: always
     ports:
-      - "5672:5672"
-      - "15672:15672"
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - rabbitmq_go_net
+
+volumes:
+  mongodb_data:
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge

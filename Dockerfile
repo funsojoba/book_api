@@ -1,27 +1,16 @@
-FROM python:3.10.6-slim as builder
+FROM python:3.8-slim-buster
 
-ENV PYTHONUNBUFFERED 1
+# Install Python dependencies
+RUN pip install --upgrade pip
+COPY requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
 
-RUN mkdir /app
-
-COPY ./requirements.txt /app/requirements.txt
-
+# Copy application files
+COPY . /app
 WORKDIR /app
 
-COPY . /app
+# Expose the Flask port
+EXPOSE 5000
 
-RUN pip install --upgrade pip \
-    && pip install -r requirements.txt 
-
-COPY run.sh /app/run.sh
-
-RUN chmod +x /app/run.sh
-
-ENTRYPOINT ["/app/run.sh"]
-
-# Path: run.sh
-#!/bin/bash
-
-
-
-
+# Start the MongoDB and RabbitMQ services
+CMD service mongod start && service rabbitmq-server start && python app.py

@@ -6,6 +6,7 @@ from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import Blueprint
+from pymongo import MongoClient
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
 from bson.objectid import ObjectId
@@ -38,7 +39,10 @@ app.register_blueprint(books_blueprint)
 
 # api = Api(app)
 
-app.config["MONGO_URI"] = "mongodb://localhost:27017/book_api_db"
+# app.config["MONGO_URI"] = "mongodb://172.19.0.3:27017/book_api_db"
+MONGO_URI = "mongodb://172.19.0.3:27017/"
+client = MongoClient(MONGO_URI)
+db = client["book_api_db"]
 # app.config['MONGODB_SETTINGS'] = {
 #     'db': 'book_api_db',
 #     'host': 'localhost',
