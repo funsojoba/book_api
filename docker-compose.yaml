@@ -1,33 +1,26 @@
 version: "3.9"
 
 services:
-  web:
+  app:
     build: .
-    command: python3 src/app.py
+    command: python -u src/app.py
     ports:
-      - "8000:8000"
-    depends_on:
-      - mongodb
-      - rabbitmq
+      - "6000:5000"
+    volumes:
+      - .:/app
+    links:
+      - db
   db:
     image: mongo:latest
-    hostname: test_mongodb
+    hostname: books_mongodb
     environment:
-      - MONGO_INITDB_DATABASE=animal_db
+      - MONGO_INITDB_DATABASE=books_db
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=pass
     volumes:
       - ./init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro
     ports:
       - 27017:27017
-  mongodb:
-    image: mongo:latest
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-      - mongodb_data:/data/db
 
   rabbitmq:
     image: rabbitmq:3-management-alpine

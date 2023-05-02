@@ -10,7 +10,7 @@ COPY . /app
 WORKDIR /app
 
 # Expose the Flask port
-EXPOSE 5000
+EXPOSE 8000
 
 # Start the MongoDB and RabbitMQ services
-CMD service mongod start && service rabbitmq-server start && python app.py
+CMD service mongod start && service rabbitmq-server start && python src/app.py

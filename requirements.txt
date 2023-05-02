@@ -24,6 +24,8 @@ platformdirs==3.2.0
 pre-commit==3.2.2
 PyJWT==2.6.0
 pymongo==4.3.3
+python-decouple==3.8
+python-dotenv==1.0.0
 pytz==2023.3
 PyYAML==6.0
 six==1.16.0
