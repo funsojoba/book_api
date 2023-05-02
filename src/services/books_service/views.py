@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from helpers.response import api_response
 
-books_blueprint = Blueprint("books", __name__, url_prefix="/book")
+books_blueprint = Blueprint("books", __name__, url_prefix="/api/books")
 
 
 @books_blueprint.route("/", methods=["GET"])

@@ -31,22 +31,18 @@ This project is a Flask app that provides an API for books, with user authentica
 The following endpoints are available in the API:
 Authentication
 
-    POST /user/signup/ - Register a new user
+    POST /api/auth/signup/ - Register a new user
     POST /api/auth/login - Authenticate a user and return a JWT token
 
-Books
+### Books
 
     GET /api/books - Get a list of all books
     POST /api/books - Create a new book
     GET /api/books/<book_id> - Get a book by ID
     PUT /api/books/<book_id> - Update a book by ID
     DELETE /api/books/<book_id> - Delete a book by ID
-    GET /api/books/search - Search for books by title, author or category
 
-Environment Variables
 
-The following environment variables are used in the application:
+### Environment Variables
 
-    MONGO_URI - MongoDB connection URI
-    RABBITMQ_URI - RabbitMQ connection URI
-    SECRET_KEY - Secret key for JWT token generation
+A list of environment variables can be found in the `.env.example` file

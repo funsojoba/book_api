@@ -59,15 +59,6 @@ def get_db():
 # client = MongoClient(config('MONGO_URI'))
 # db = client["book_api_db"]
 
-"""
-application = Flask(__name__)
-
-application.config["MONGO_URI"] = 'mongodb://' + os.environ['MONGODB_USERNAME'] + ':' + os.environ['MONGODB_PASSWORD'] + '@' + os.environ['MONGODB_HOSTNAME'] + ':27017/' + os.environ['MONGODB_DATABASE']
-
-mongo = PyMongo(application)
-db = mongo.db
-"""
-
 app.config["JWT_SECRET_KEY"] = config("JWT_SECRET_KEY")
 jwt = JWTManager(app)
 
@@ -75,22 +66,6 @@ jwt = JWTManager(app)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
 app.register_blueprint(books_blueprint)
-
-# api = Api(app)
-
-# app.config["MONGO_URI"] = "mongodb://172.19.0.3:27017/book_api_db"
-# MONGO_URI = "mongodb://172.19.0.3:27017/"
-# # MONGO_URI="mongodb://0.0.0.0:27017/"
-# client = MongoClient(MONGO_URI)
-# db = client["book_api_db"]
-# app.config['MONGODB_SETTINGS'] = {
-#     'db': 'book_api_db',
-#     'host': 'localhost',
-#     'port': 27017
-# }
-
-# my_client = pymongo.MongoClient("mongodb://localhost:27017/")
-# my_db = my_client["book_api_db"]
 
 
 mongo = PyMongo(app)

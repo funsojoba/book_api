@@ -12,10 +12,10 @@ from helpers.response import api_response
 from helpers.password_helper import password_regex
 
 
-auth_blueprint = Blueprint("auth", __name__)
+auth_blueprint = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 
-@auth_blueprint.route("/user/signup/", methods=["POST"])
+@auth_blueprint.route("/signup/", methods=["POST"])
 def signup():
     from app import mongo
 
@@ -56,7 +56,7 @@ def signup():
     return api_response(201, "registered successfully")
 
 
-@auth_blueprint.route("/user/login/", methods=["POST"])
+@auth_blueprint.route("/login/", methods=["POST"])
 def login():
     from app import mongo
 
