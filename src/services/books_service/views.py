@@ -11,10 +11,10 @@ books_blueprint = Blueprint("books", __name__, url_prefix="/api/books")
 @books_blueprint.route("/", methods=["GET"])
 @jwt_required()
 def list_books():
-    from app import mongo
+    from app import get_db
 
-    db = mongo.db.books
-    book_collection = db.find()
+    db = get_db()
+    book_collection = db.books.find()
 
     book_list = []
 
@@ -32,10 +32,10 @@ def list_books():
 @books_blueprint.route("/<id>", methods=["GET"])
 @jwt_required()
 def get_book(id):
-    from app import mongo
+    from app import get_db
 
-    db = mongo.db.books
-    single_book = db.find_one({"_id": ObjectId(id)})
+    db = get_db()
+    single_book = db.books.find_one({"_id": ObjectId(id)})
 
     if single_book:
         json_book = json_util.loads(json_util.dumps(single_book))
@@ -54,9 +54,10 @@ def get_book(id):
 @books_blueprint.route("/", methods=["POST"])
 @jwt_required()
 def add_book():
-    from app import mongo
+    from app import get_db
 
-    db = mongo.db.books
+    db = get_db()
+
     title = request.json.get("title", None)
     page_number = request.json.get("page_number", None)
     description = request.json.get("description", None)
@@ -75,7 +76,7 @@ def add_book():
     if errors:
         return api_response(400, errors=errors)
 
-    book = db.insert_one(
+    book = db.books.insert_one(
         {
             "title": title,
             "author": current_user_id,
@@ -89,9 +90,10 @@ def add_book():
 @books_blueprint.route("/<id>", methods=["PUT"])
 @jwt_required()
 def update_book(id):
-    from app import mongo
+    from app import get_db
 
-    db = mongo.db.books
+    db = get_db()
+
     title = request.json.get("title", None)
     page_number = request.json.get("page_number", None)
     description = request.json.get("description", None)
@@ -99,7 +101,7 @@ def update_book(id):
 
     book = db.find_one({"_id": ObjectId(id)})
 
-    db.update_one(
+    db.books.update_one(
         {"_id": ObjectId(id)},
         {
             "$set": {
@@ -114,9 +116,9 @@ def update_book(id):
 @books_blueprint.route("/<id>", methods=["DELETE"])
 @jwt_required()
 def delete_book(id):
-    from app import mongo
+    from app import get_db
 
-    db = mongo.db.books
+    db = get_db()
 
-    db.delete_one({"_id": ObjectId(id)})
+    db.books.delete_one({"_id": ObjectId(id)})
     return api_response(204, "book deleted successfully")

@@ -17,9 +17,10 @@ auth_blueprint = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 @auth_blueprint.route("/signup/", methods=["POST"])
 def signup():
-    from app import mongo
+    from app import get_db
 
-    db = mongo.db.users
+    db = get_db()
+
     errors = []
     username = request.json.get("username", None)
     if not username:
@@ -42,7 +43,7 @@ def signup():
         errors.append("username must be between 4 and 10 characters")
 
     # check if username or email already exists
-    if db.find_one({"username": username}) or db.find_one({"email": email}):
+    if db.users.find_one({"username": username}) or db.find_one({"email": email}):
         errors.append("username or email already exists")
 
     if errors:
@@ -50,7 +51,7 @@ def signup():
 
     hashed_password = generate_password_hash(password)
 
-    id = db.insert_one(
+    id = db.users.insert_one(
         {"email": email, "password": hashed_password, "username": username}
     )
     return api_response(201, "registered successfully")
@@ -58,9 +59,10 @@ def signup():
 
 @auth_blueprint.route("/login/", methods=["POST"])
 def login():
-    from app import mongo
+    from app import get_db
 
-    db = mongo.db.users
+    db = get_db()
+
     username = request.json.get("username", None)
     email = request.json.get("email", None)
     password = request.json.get("password", None)
@@ -77,7 +79,7 @@ def login():
     if errors:
         return api_response(400, errors=errors)
 
-    user = db.find_one(
+    user = db.users.find_one(
         {"$or": [{"username": username_or_email}, {"email": username_or_email}]}
     )
 
