@@ -1,4 +1,3 @@
-# book_api
 # Book API with User Authentication and CRUD Operations
 
 This project is a Flask app that provides an API for books, with user authentication and CRUD operations for books by user. The API is built using Python Flask framework and uses MongoDB as the database for storing books and user authentication data. RabbitMQ is used for message queueing.
