@@ -6,3 +6,10 @@
 
 APP_PATH=/home/username/MyApp
 
+# connect to MongoDB
+
+
+# Create collections
+
+
+# Run the App
