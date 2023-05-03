@@ -52,4 +52,4 @@ A list of environment variables can be found in the `.env.example`
 ### Postman collection
 
 Here's the link to the Postman collection
-https://documenter.getpostman.com/view/9644998/2s93eU2Zrd
+[Postman Collextion](https://documenter.getpostman.com/view/9644998/2s93eU2Zrd)
